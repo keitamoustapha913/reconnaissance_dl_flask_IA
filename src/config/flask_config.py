@@ -10,5 +10,5 @@ class Config:
     TESTING = False
     ENV ='development'
     FLASK_API_ROOT_PATH = os.path.join(os.path.realpath(os.path.dirname(__file__)))
-    UPLOAD_PRED_FOLDER = os.path.join( FLASK_API_ROOT_PATH , 'static',  'upload_pred_images' )
+    UPLOAD_PRED_FOLDER = os.path.join( os.path.realpath( os.path.dirname(FLASK_API_ROOT_PATH) ) ,'flask_api', 'static',  'upload_pred_images' )
     

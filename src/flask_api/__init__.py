@@ -2,6 +2,8 @@ from flask import Flask,url_for , render_template ,request
 from config.flask_config import Config
 import os
 
+from objects.AslPredictor import AslPredictor
+from config.params import get_model_params, get_dataset_params, get_callback_params
 
 # Create Flask application
 flask_app = Flask(__name__)
@@ -38,6 +40,8 @@ def upload_predict():
 
 @flask_app.route("/training", methods=["GET"])
 def training():
+    predictor = AslPredictor(get_model_params(), get_dataset_params(), get_callback_params())
+    predictor.run()
 
     return render_template("index.html")
 
