@@ -1,5 +1,5 @@
 from flask import Flask,url_for , render_template ,request
-from flask_api.flask_config import Config
+from config.flask_config import Config
 import os
 
 
@@ -23,7 +23,6 @@ def upload_predict():
         image_file = request.files["image"]
 
         print(image_file.filename)
-        print(flask_app.config['UPLOAD_PRED_FOLDER'])
         if image_file:
             image_location = os.path.join(
                 flask_app.config['UPLOAD_PRED_FOLDER'],
@@ -46,6 +45,7 @@ def training():
 
 def create_app(config_class=Config):
     
+    # random database creation
     with flask_app.app_context():
 
         return flask_app
