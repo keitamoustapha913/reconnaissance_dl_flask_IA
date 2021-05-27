@@ -3,10 +3,12 @@ from objects.Callback import Callback
 import numpy as np
 import matplotlib.pyplot as plt
 from tensorflow import keras
+from tensorflow.keras import models
 from tensorflow.keras.models import Model
 from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
 from tensorflow.keras.optimizers import SGD
-
+from tensorflow.keras import preprocessing
+from tensorflow import expand_dims
 
 class AslPredictor:
     def __init__(self, model_params, dataset_params, callback_params):
@@ -27,6 +29,9 @@ class AslPredictor:
         self.steps_per_epoch = model_params['steps_per_epoch']
         self.validation_steps = model_params['validation_steps']
         self.epochs = model_params['epochs']
+
+        # PREDICTION PARAMS
+        self.target_size = dataset_params['target_size']
 
     # __________________________________________________________________________________________________________________
     def run(self):
@@ -87,6 +92,41 @@ class AslPredictor:
             epochs=50,
             callbacks=[self.callback]
         )
+    
+    # __________________________________________________________________________________________________________________
+    def predict(self, model_name: str, image_path: str):
+        """
+            predict an image
+        :param
+            model_name: name of the model
+        :return:
+        """
+        #self.model.save(model_name+'.h5')
+        #self.create_model()
+
+        self.model = models.load_model(model_name+'.h5')
+
+        img = preprocessing.image.load_img(
+                image_path , target_size = self.target_size
+        )
+
+        img_array = preprocessing.image.img_to_array(img)
+        img_array = expand_dims(img_array, 0)
+
+        predictions = self.model.predict(img_array)
+
+        print(f"Labels : { self.class_names} \n")
+
+        print( f" Predictions : {predictions}" )
+
+        class_predicted = self.class_names[np.argmax(predictions)]
+        confidence = 100 * np.max(predictions)
+
+        print(
+            "This image is {} with a {:.2f} percent confidence.".format(class_predicted, confidence  )
+        )
+
+        return class_predicted , confidence
 
     # __________________________________________________________________________________________________________________
     def save_model(self, model_name: str):
@@ -157,3 +197,10 @@ class AslPredictor:
     @property
     def num_labels(self):
         return len(np.unique(self.dataset.train_generator.labels))
+
+    @property
+    def class_names(self):
+        labels = self.dataset.train_generator.class_indices
+        #self.labels = dict((v,k) for k,v in labels.items())
+        class_names = [ k for k, v in labels.items() ]
+        return np.array (class_names )

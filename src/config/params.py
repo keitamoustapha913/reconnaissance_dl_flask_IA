@@ -16,7 +16,7 @@ def get_model_params():
 
 def get_dataset_params():
     return {
-        'training_dir': '../data',
+        'training_dir': r'C:\Users\keita\Documents\reconnaissance_dl_flask_IA\data\ASL',
         'target_size': (200, 200),
         'shuffle': True,
         'seed': 13,

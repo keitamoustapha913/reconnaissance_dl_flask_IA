@@ -32,16 +32,20 @@ def upload_predict():
             )
 
             image_file.save(image_location)
-            #pred = predict(image_location, MODEL)[0]
-            pred = 1
-            return render_template("prediction.html", prediction=pred, image_loc=image_file.filename)
-    return render_template("prediction.html", prediction=0, image_loc=None)
+
+            predictor = AslPredictor(get_model_params(), get_dataset_params(), get_callback_params())
+            class_predicted , confidence = predictor.predict(  model_name = os.path.join( flask_app.config['PROJECT_ROOT_PATH']  , "saved_model", "default_asl" ) , image_path = image_location )
+            
+            return render_template("prediction.html", prediction= class_predicted, image_loc=image_file.filename)
+
+    return render_template("prediction.html", prediction= 0 , image_loc=None)
 
 
 @flask_app.route("/training", methods=["GET"])
 def training():
-    predictor = AslPredictor(get_model_params(), get_dataset_params(), get_callback_params())
-    predictor.run()
+    trainer = AslPredictor(get_model_params(), get_dataset_params(), get_callback_params())
+    trainer.run()
+    trainer.save_model( os.path.join( flask_app.config['PROJECT_ROOT_PATH']  , "saved_model", "default_asl" ) )
 
     return render_template("index.html")
 

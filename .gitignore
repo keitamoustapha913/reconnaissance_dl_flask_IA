@@ -5,3 +5,6 @@
 /src/flask_api/dl_model/dataset/
 /src/flask_api/dl_model/saved_model/
 __pycache__/
+src/saved_model/
+saved_model/
+reconnaissance_flask_AI_penguins.zip
